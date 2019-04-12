@@ -1,0 +1,40 @@
+
+service: api-train-station
+
+custom:
+  defaultProfile: default
+
+provider:
+  name: aws
+  profile: ${opt:profile, self:custom.defaultProfile}
+  runtime: nodejs8.10
+  stage: prod
+  region: ap-northeast-1
+  stackName: 'api-train-station'
+  apiName: 'api-train-station'
+  memorySize: 128
+  timeout: 3
+  deploymentBucket:
+    name: api.ryoichi0102.com
+
+package:
+  excludeDevDependencies: true
+
+functions:
+  index:
+    name: 'api-train-station'
+    handler: index.handler
+    cloudwatchLog: '/aws/lambda/${self:service}'
+    events:
+      - http:
+          path: /
+          method: get
+          cors:
+            origins: '*'
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authroization
+            - X-Api-Key
+            - X-Amz-Security-Token
+          allowCredentials: false
